@@ -1,3 +1,14 @@
+// Namespace principal do ASP.NET Core
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
+// Namespace do Entity Framework Core
+using Microsoft.EntityFrameworkCore;
+
+// Nosso DbContext
+using School.Api.Infrastructure.Data;
+
 // Cria o "builder" da aplicação.
 // Ele é responsável por:
 // - Ler configurações
@@ -22,6 +33,22 @@ builder.Services.AddEndpointsApiExplorer();
 
 // Swagger (Swashbuckle) - documentação da API
 builder.Services.AddSwaggerGen();
+
+// =======================
+// CONFIGURAÇÃO DO EF CORE
+// =======================
+//
+// Aqui estamos dizendo:
+// - Use o SchoolDbContext
+// - Use PostgreSQL como banco
+// - Use a connection string chamada "DefaultConnection"
+//
+builder.Services.AddDbContext<SchoolDbContext>(options =>
+{
+    options.UseNpgsql(
+        builder.Configuration.GetConnectionString("DefaultConnection")
+    ); // GetConnectionString -> Lê o appsettings.json / permite trocar banco sem mudar código
+});
 
 /// ===============================
 /// BUILD DA APLICAÇÃO
@@ -53,6 +80,9 @@ if (app.Environment.IsDevelopment())
 // Boa prática de segurança.
 app.UseHttpsRedirection();
 
+// Autorização (vamos usar quando entrar JWT)
+app.UseAuthorization();
+
 // Mapeia os Controllers.
 // Isso faz com que:
 // - [ApiController]
@@ -64,6 +94,6 @@ app.MapControllers();
 /// START DA APLICAÇÃO
 /// ===============================
 
-// Inicia o servidor web.
+// Inicia o servidor web / Sobe a aplicação
 app.Run();
 
