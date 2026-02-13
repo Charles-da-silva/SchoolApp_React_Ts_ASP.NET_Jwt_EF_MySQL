@@ -83,17 +83,19 @@ app.UseHttpsRedirection();
 // Autorização (vamos usar quando entrar JWT)
 app.UseAuthorization();
 
-// Mapeia os Controllers.
-// Isso faz com que:
-// - [ApiController]
-// - [HttpGet], [HttpPost], etc.
-// comecem a funcionar.
+/* Mapeia os Controllers.
+    Isso faz com que:
+        - [ApiController]
+        - [HttpGet], [HttpPost], etc.
+    comecem a funcionar.
+    Sem isso, o ASP.NET não reconhece os Controllers e as rotas.
+*/
 app.MapControllers();
 
-/// ===============================
-/// START DA APLICAÇÃO
-/// ===============================
+/*  ================================
+    START DA APLICAÇÃO
+    ===============================*/
 
-// Inicia o servidor web / Sobe a aplicação
+//Inicia o servidor web / Sobe a aplicação 
 app.Run();
 
