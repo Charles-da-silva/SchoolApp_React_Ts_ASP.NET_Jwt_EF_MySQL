@@ -1,3 +1,8 @@
+
+/*  ================================
+    ESTE ARQUIVO É O CORAÇÃO DA APLICAÇÃO
+    ===============================*/
+    
 // Namespace principal do ASP.NET Core
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -47,7 +52,9 @@ builder.Services.AddDbContext<SchoolDbContext>(options =>
 {
     options.UseNpgsql(
         builder.Configuration.GetConnectionString("DefaultConnection")
-    ); // GetConnectionString -> Lê o appsettings.json / permite trocar banco sem mudar código
+    ); 
+    // UseNpgsql -> Configura o EF Core para usar o PostgreSQL
+    // GetConnectionString -> Lê o appsettings.json / permite trocar banco sem mudar muitos códigos
 });
 
 /// ===============================
