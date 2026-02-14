@@ -1,4 +1,14 @@
+// Usings necessários para trabalhar com ASP.NET MVC
 using Microsoft.AspNetCore.Mvc;
+
+// Usings para trabalhar com EF Core (LINQ, DbContext, etc.)
+using Microsoft.EntityFrameworkCore;
+
+// Importa o DbContext da aplicação
+using School.Api.Infrastructure.Data;
+
+// Importa a entidade Student
+using School.Api.Domain.Entities;
 
 namespace School.Api.Controllers
 {
@@ -10,30 +20,46 @@ namespace School.Api.Controllers
     [Route("api/[controller]")]
     public class StudentsController : ControllerBase
     {
-        // Esse método responde a requisições GET (GET http://localhost:xxxx/api/students)
-        [HttpGet]
-        public IActionResult GetAll()
+         // Campo privado para armazenar o DbContext
+        private readonly SchoolDbContext _context;
+        
+        /*
+            CONSTRUTOR COM DEPENDENCY INJECTION (DI)
+
+            O ASP.NET Core cria automaticamente uma instância de SchoolDbContext e injeta aqui para nós.
+
+            Ou seja:
+            - NÃO criamos o DbContext manualmente
+            - NÃO usamos "new SchoolDbContext(...)"
+            - O framework cuida do ciclo de vida
+        */
+        public StudentsController(SchoolDbContext context)
         {
-            // Por enquanto, vamos retornar dados "fake"
-            // Depois isso virá do banco de dados
+            _context = context;
+        }
 
-            var students = new[]
-            {
-                new
-                {
-                    Id = 1,
-                    Name = "Ana Clara",
-                    Age = 4
-                },
-                new
-                {
-                    Id = 2,
-                    Name = "João Pedro",
-                    Age = 5
-                }
-            };
+        /*
+            ENDPOINT: GET /api/students
 
-            // Retorna HTTP 200 (OK) + JSON
+            Objetivo:
+            - Buscar todos os alunos ativos no banco
+            - Retornar uma lista em formato JSON
+        */
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Student>>> GetStudents()
+        {
+            /* _context.Students
+                significa:
+                    - Acessar a tabela Students;
+                    - Trabalhar com objetos C#
+                    - Sem escrever SQL diretamente */
+                    
+            // Busca todos os alunos ativos (IsActive = true)
+            var students = await _context.Students
+                .Where(s => s.IsActive)
+                .ToListAsync();
+
+            // Retorna HTTP 200 (OK) com os dados
             return Ok(students);
         }
     }
